@@ -1,0 +1,16 @@
+<s>::=<r> <np> <r> <vp> <r>
+<np>::=<dp> <adjp> <n>|<pn>
+<dp>::=the|a
+<adjp>::=<adj>|<adj> <adjp>
+<adj>::=big|fat|green|wonderful|faulty|subliminal|pretentious
+<n>::=dog|cat|man|university|father|mother|child|television
+<pn>::=John|Jane|Sally|Spot|Fred|Elmo
+<vp>::=<tv> <np>|<iv>
+<tv>::=hit|honored|kissed|helped
+<iv>::=died|collapsed|laughed|wept
+<r>::=<symbol> <r1> <symbol>|<symbol> <r2> <symbol>|<symbol> <r3> <symbol>|<symbol> <r4> <symbol>
+<r1>::=oejd|<r2> jwo|eiks <r1>|jdn|fkvla|jkdsf|nqiow|eign|2i30|u5
+<r2>::=nv0qd|jcm|<r3> qlkwe|rf,|;qeld|skvm|cqow|iueg|fnq3
+<r3>::=iwmveoa|qoks|mlvckw|<r4> vowjdmn|qowje|wjomv
+<r4>::=wjdlvnk|lkwdmvi|<r3> wkdmnv|iqweu|skmcdlv,wq|qfkwjnd
+<symbol>::=@
