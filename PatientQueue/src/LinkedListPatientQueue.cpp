@@ -5,35 +5,43 @@
 #include "error.h"
 
 LinkedListPatientQueue::LinkedListPatientQueue() {
-    front = new PatientNode;
-    current = new PatientNode;
-    front->next = nullptr;
+    front = nullptr;
 }
 
 LinkedListPatientQueue::~LinkedListPatientQueue() {
-    delete front;
-    delete current;
+    while(front != 0) {
+        PatientNode *temp = front;
+        front = temp->next;
+        delete temp;
+    }
 }
 
 void LinkedListPatientQueue::clear() {
     while(!this->isEmpty()) {
-        PatientNode *temp = front->next;
-        front->next = temp->next;
+        PatientNode *temp = front;
+        front = temp->next;
         delete temp;
     }
 }
 
 string LinkedListPatientQueue::frontName() {
-    return front->next->name;
+    if(this->isEmpty()) {
+        //these exception sentences are given by output3.txt
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    return front->name;
 }
 
 int LinkedListPatientQueue::frontPriority() {
-    return front->next->priority;
+    if(this->isEmpty()) {
+        //these exception sentences are given by output3.txt
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    return front->priority;
 }
 
 bool LinkedListPatientQueue::isEmpty() {
-    //if the memory address, front->next, is 0x0
-    if(front->next == 0)
+    if(front == 0)
         return true;
     return false;
 }
@@ -42,39 +50,26 @@ void LinkedListPatientQueue::newPatient(string name, int priority) {
     PatientNode *temp = new PatientNode;
     temp->name = name;
     temp->priority = priority;
-    current->next = front->next;
+    PatientNode *current = front;
     if(this->isEmpty()) { //empty queue
-        front->next = temp;
-    }
-    else if(front->next->next == 0) { //one node
-        if(priority < front->next->priority) { //new patient has smaller priority
-            temp->next = front->next;
-            front->next = temp;
-        } else { //new patient has bigger priority
-            front->next->next = temp;
-        }
-    }
-    //more than one node, and the new patient's priority is the smallest
-    else if(priority < front->next->priority) {
-        temp->next = front->next;
-        front->next = temp;
-    }
-    else {
-        while(true) {
-            //the steps above ensured that the queue has at least
-            //two patients, which means that current->next->next
-            //has been initialized
-            if(priority < current->next->next->priority){
-                temp->next = current->next->next;
-                current->next->next = temp;
-                break;
-            } else {
-                current->next = current->next->next;
-            }
-            //all nodes have been visited, add the new patient to tail
-            if(current->next->next == 0) {
-                current->next->next = temp;
-                break;
+        front = temp;
+    } else  {
+        if(priority < front->priority) {
+            temp->next = front;
+            front = temp;
+        } else {
+            while(true) {
+                if(current->next == 0) {
+                    current->next = temp;
+                    break;
+                }
+                if(priority < current->next->priority) {
+                    temp->next = current->next;
+                    current->next = temp;
+                    break;
+                } else {
+                    current = current->next;
+                }
             }
         }
     }
@@ -85,38 +80,84 @@ string LinkedListPatientQueue::processPatient() {
         //these exception sentences are given by output3.txt
         error("There is no top. I must abort. I never learned how to love...");
     }
-    string name = front->next->name;
-    PatientNode *temp = front->next;
-    front->next = temp->next;
+    string name = front->name;
+    PatientNode *temp = front;
+    front = temp->next;
     delete temp;
     return name;
 }
 
 void LinkedListPatientQueue::upgradePatient(string name, int newPriority) {
-    current->next = front->next;
+    if(this->isEmpty()) {
+        //these exception sentences are given by output3.txt
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    PatientNode *current = front;
+     //I do this initialization just for eliminating the annoying warnings
+    PatientNode *temp = front;
+    if(front->next == 0) {
+        if(newPriority <= front->priority) {
+            front->priority = newPriority;
+            return;
+        } else {
+            error("The given patient is present in the queue and already "
+                      "has a more urgent priority than the given new priority.");
+        }
+    }
     while(current->next != 0) {
         //Don't need to concern about people with the same name
         //becauese this is linked list!
         //The first person I meet must be of the smallest priority
-        //among the people with same name
+        //among the people with same name.
         if(current->next->name == name) {
-            current->next->priority = newPriority;
-            break;
+            if(newPriority < current->next->priority) {
+                //Extract the node from the linkedlist
+                current->next->priority = newPriority;
+                temp = current->next;
+                current->next = current->next->next;
+                break;
+            } else {
+                error("The given patient is present in the queue and already "
+                          "has a more urgent priority than the given new priority.");
+            }
         }
-        current->next = current->next->next;
+        if(current->next == 0) {
+            error("The given patient is not already in the queue.");
+        }
+        current = current->next;
+        }
+    //Insert the node to the right position
+    current = front;
+    if(temp->priority < front->priority) {
+        temp->next = front;
+        front = temp;
+    } else {
+        while(true) {
+            if(current->next == 0) {
+                current->next = temp;
+                break;
+            }
+            if(temp->priority < current->next->priority) {
+                temp->next = current->next;
+                current->next = temp;
+                break;
+            } else {
+                current = current->next;
+            }
+        }
     }
 }
 
 string LinkedListPatientQueue::toString() {
     string output;
     output += '{';
-    current->next = front->next;
+    PatientNode *current = front;
     while(!this->isEmpty()) {
-        output += integerToString(current->next->priority);
+        output += integerToString(current->priority);
         output += ':';
-        output += current->next->name + ", ";
-        current->next = current->next->next;
-        if(current->next == 0) { //remove ", " after all nodes are visited
+        output += current->name + ", ";
+        current = current->next;
+        if(current == 0) { //remove ", " after all nodes are visited
             output.pop_back();
             output.pop_back();
             break;

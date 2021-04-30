@@ -5,11 +5,11 @@
 #include "HeapPatientQueue.h"
 
 HeapPatientQueue::HeapPatientQueue() {
-    // TODO: write this constructor
+    node = new PatientNode[capacity];
 }
 
 HeapPatientQueue::~HeapPatientQueue() {
-    // TODO: write this destructor
+    delete [] node;
 }
 
 void HeapPatientQueue::clear() {
@@ -17,26 +17,27 @@ void HeapPatientQueue::clear() {
 }
 
 string HeapPatientQueue::frontName() {
-    // TODO: write this function
-    return "";   // this is only here so it will compile
+    return node[1].name;
 }
 
 int HeapPatientQueue::frontPriority() {
-    // TODO: write this function
-    return 0;   // this is only here so it will compile
+    return node[1].priority;
 }
 
 bool HeapPatientQueue::isEmpty() {
-    // TODO: write this function
+    if(size == 0)
+        return true;
     return false;   // this is only here so it will compile
 }
 
 void HeapPatientQueue::newPatient(string name, int priority) {
     // TODO: write this function
+    size++;
 }
 
 string HeapPatientQueue::processPatient() {
     // TODO: write this function
+    size--;
     return "";   // this is only here so it will compile
 }
 

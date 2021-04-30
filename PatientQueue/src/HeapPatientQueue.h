@@ -26,4 +26,6 @@ public:
 private:
     // TODO: add specified member variable(s)
     // TODO: add any member functions necessary
+    int capacity = 10, size;
+    PatientNode *node;
 };

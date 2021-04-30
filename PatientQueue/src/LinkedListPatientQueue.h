@@ -24,5 +24,5 @@ public:
 private:
     // TODO: add specified member variable(s)
     // TODO: add any member functions necessary
-    PatientNode *front, *current;
+    PatientNode *front;
 };
