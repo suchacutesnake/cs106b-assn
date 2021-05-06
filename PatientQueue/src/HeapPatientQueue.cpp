@@ -1,51 +1,125 @@
 // heappatientqueue.cpp
 // THIS IS AN EXTENSION AND NOT REQUIRED FOR THE ASSIGNMENT
-// This is the CPP file you will edit and turn in. (TODO: Remove this comment!)
 
 #include "HeapPatientQueue.h"
+#include "error.h"
+#include "strlib.h"
 
 HeapPatientQueue::HeapPatientQueue() {
-    node = new PatientNode[capacity];
+    patient = new PatientNode[capacity + 1];
+    size = 0;
 }
 
 HeapPatientQueue::~HeapPatientQueue() {
-    delete [] node;
+    delete [] patient;
 }
 
 void HeapPatientQueue::clear() {
-    // TODO: write this function
+    size = 0;
 }
 
 string HeapPatientQueue::frontName() {
-    return node[1].name;
+    if(isEmpty()) {
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    return patient[1].name;
 }
 
 int HeapPatientQueue::frontPriority() {
-    return node[1].priority;
+    if(isEmpty()) {
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    return patient[1].priority;
 }
 
 bool HeapPatientQueue::isEmpty() {
     if(size == 0)
         return true;
-    return false;   // this is only here so it will compile
+    return false;
 }
 
 void HeapPatientQueue::newPatient(string name, int priority) {
-    // TODO: write this function
     size++;
+    if(size > capacity) {
+        error("too much patients");
+    }
+    patient[size].name = name;
+    patient[size].priority = priority;
+    newPatientHelper(size);
+}
+
+void HeapPatientQueue::newPatientHelper(int index) {
+    if(index == 1)
+        return;
+    if(patient[index].priority < patient[index/2].priority) {
+        PatientNode temp = patient[index/2];
+        patient[index/2] = patient[index];
+        patient[index] = temp;
+        newPatientHelper(index/2);
+    }
 }
 
 string HeapPatientQueue::processPatient() {
-    // TODO: write this function
+    if(isEmpty()) {
+        error("There is no top. I must abort. I never learned how to love...");
+    }
+    string name = patient[1].name;
+    patient[1] = patient[size];
     size--;
-    return "";   // this is only here so it will compile
+    processPatientHelper(1);
+
+    return name;
+}
+
+void HeapPatientQueue::processPatientHelper(int index) {
+    if(index * 2 > size)
+        return;
+    int child;
+    PatientNode temp;
+    if(index * 2 == size) {//only one child
+        child = index * 2;
+    } else if(patient[index * 2].priority < patient[index * 2 + 1].priority) {
+        child = index * 2;
+    } else {
+        child = index * 2 + 1;
+    }
+    if(patient[child].priority < patient[index].priority) {
+        temp = patient[child];
+        patient[child] = patient[index];
+        patient[index] = temp;
+        processPatientHelper(child);
+    }
 }
 
 void HeapPatientQueue::upgradePatient(string name, int newPriority) {
-    // TODO: write this function
+    for(int i = 1; i < size + 1; i++) {
+        if(patient[i].name == name) {
+            if(patient[i].priority < newPriority) {
+                error("The given patient is present in the queue and already "
+                          "has a more urgent priority than the given new priority.");
+            } else {
+                patient[i].priority = newPriority;
+                newPatientHelper(i);
+            }
+            break;
+        }
+        if(i == size) {
+            error("The given patient is not already in the queue.");
+        }
+    }
 }
 
 string HeapPatientQueue::toString() {
-    // TODO: write this function
-    return ""; // this is only here so it will compile
+    if(size == 0) {
+        return "{}";
+    }
+    string output;
+    output += '{';
+    for(int i = 1; i < size + 1; i++) {
+        output += integerToString(patient[i].priority) + ':'+ patient[i].name + ", ";
+    }
+    output.pop_back();
+    output.pop_back();
+    output += '}';
+    return output;
 }

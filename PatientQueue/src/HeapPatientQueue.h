@@ -18,8 +18,8 @@ public:
     void clear();
     int frontPriority();
     bool isEmpty();
-    void newPatient(string name, int priority);
-    string processPatient();
+    void newPatient(string name, int priority);//big-O:log2n
+    string processPatient();//big-O:log2n
     void upgradePatient(string name, int newPriority);
     string toString();
 
@@ -27,5 +27,7 @@ private:
     // TODO: add specified member variable(s)
     // TODO: add any member functions necessary
     int capacity = 10, size;
-    PatientNode *node;
+    PatientNode *patient;
+    void newPatientHelper(int index);
+    void processPatientHelper(int index);
 };
